@@ -48,7 +48,7 @@ namespace RfcFacil
             {
                 if (forbidden.Equals(nameCode))
                 {
-                    return string.Format("{0}{1}", nameCode.Substring(0, 3), "X");
+                    return string.Format("{0}{1}{2}", nameCode.Substring(0, 1), "X", nameCode.Substring(2, 2));
                 }
             }
 
@@ -182,9 +182,7 @@ namespace RfcFacil
             Match m = Regex.Match(normalizedWord, VowelPattern);
             
             if (m.Length <= 0)
-            {
-                throw new ArgumentException("Word doesn't contain a vowel: " + normalizedWord);
-            }
+                return "X";
 
             return normalizedWord[m.Index].ToString();
         }
@@ -231,7 +229,7 @@ namespace RfcFacil
         private string FirstLetterOf(string word)
         {
             string normalizedWord = Normalize(word);
-            
+
             return normalizedWord[0].ToString();
         }
 
@@ -265,14 +263,11 @@ namespace RfcFacil
 
             foreach(var particle in SpecialParticles)
             {
-                var particlePositions = new [] { particle + " ", " " + particle };
-
-                foreach(var p in particlePositions)
+                var particlePositions = $" {particle} ";
+                while (newWord.ToString().Contains(particlePositions))
                 {
-                    while (newWord.ToString().Contains(p)) {
-                        int i = newWord.ToString().IndexOf(p);
-                        newWord.Remove(i, i + p.ToString().Length);
-                    }
+                    int i = newWord.ToString().IndexOf(particlePositions);
+                    newWord.Remove(i, i + particlePositions.ToString().Length - 1);
                 }
             }
 
